@@ -6,6 +6,8 @@ import 'package:restaurant_api/static/navigation_route.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_api/static/restaurant_list_result_state.dart';
 
+import '../settings/ThemeSettingsScreen.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({
     super.key,
@@ -34,6 +36,17 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Restaurant List"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ThemeSettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<RestaurantListProvider>(
         builder: (context, value, child) {
