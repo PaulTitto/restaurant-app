@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_api/screen/detail/restaurant_detail_provider.dart';
 import 'package:restaurant_api/static/restaurant_detail_result_state.dart';
 
+import '../../data/model/restaurant.dart';
+import '../bookmark/bookmark_icon_provider.dart';
+import 'bookmark_icon_widget.dart';
+
 class DetailScreen extends StatefulWidget {
   final String restaurantId;
 
@@ -29,6 +33,30 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Restaurant Details'),
+        actions: [
+          ChangeNotifierProvider(
+            create: (context) => BookmarkIconProvider(),
+            child: Consumer<RestaurantDetailProvider>(
+              builder: (context, value, child) {
+                final state = value.resultState;
+                return switch (state) {
+                  RestaurantDetailLoadedState(data: var restaurant) =>
+                      BookmarkIconWidget(
+                        restaurant: Restaurant(
+                          id: state.data.id,
+                          name: state.data.name,
+                          description: state.data.description,
+                          pictureId: state.data.pictureId,
+                          city: state.data.city,
+                          rating: state.data.rating,
+                        ),
+                      ),
+                  _ => const SizedBox(),
+                };
+              },
+            ),
+          ),
+        ],
       ),
       body: Consumer<RestaurantDetailProvider>(
         builder: (context, provider, child) {

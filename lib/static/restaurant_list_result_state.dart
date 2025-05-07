@@ -1,4 +1,5 @@
-import 'package:restaurant_api/data/model/restaurant_list_response.dart';
+
+import '../data/model/restaurant.dart';
 
 sealed class RestaurantListResultState{}
 
