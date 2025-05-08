@@ -8,6 +8,8 @@ import 'package:restaurant_api/screen/home/restaurant_list_provider.dart';
 import 'package:restaurant_api/screen/main/index_nav_provider.dart';
 import 'package:restaurant_api/screen/main/main_screen.dart';
 import 'package:restaurant_api/screen/theme_provider.dart';
+import 'package:restaurant_api/services/local_notification_provider.dart';
+import 'package:restaurant_api/services/local_notification_service.dart';
 import 'package:restaurant_api/static/navigation_route.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -17,7 +19,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   tz.initializeTimeZones();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -26,6 +27,11 @@ void main() async {
   InitializationSettings(android: initializationSettingsAndroid);
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  final localNotificationService = LocalNotificationService();
+  await localNotificationService.init();
+  await localNotificationService.configureLocalTimeZone();
+
+  await localNotificationService.requestPermissions();
 
   runApp(
     MultiProvider(
@@ -49,7 +55,18 @@ void main() async {
         Provider(create: (context)=> LocalDatabaseService()),
         ChangeNotifierProvider(create: (context) =>LocalDatabaseProvider(
           context.read<LocalDatabaseService>()
-        ))
+        )),
+        Provider(
+          create: (context) => LocalNotificationService(
+            // context.read<HttpService>(),
+          )
+            ..init()
+            ..configureLocalTimeZone(),
+        ),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (_) => LocalNotificationProvider(LocalNotificationService()),
+        ),
 
 
       ],
